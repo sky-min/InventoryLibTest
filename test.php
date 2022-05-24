@@ -56,6 +56,7 @@ class InvTest extends PluginBase{
 			$player->sendMessage('closed inv');
 		});
 		$inv->setItem(4, ItemFactory::getInstance()->get(5));
+		$inv->addItem(ItemFactory::getInstance()->get(1));
 		$inv->send($sender);
 		return true;
 	}
