@@ -17,12 +17,14 @@ use pocketmine\item\ItemFactory;
 
 use pocketmine\command\{Command, CommandSender, PluginCommand};
 
-use skymin\InventoryLib\{InvLibManager, LibInvType, InvLibAction, LibInventory};
+use skymin\InventoryLib\InvLibHandler;
+use skymin\InventoryLib\action\InventoryAction;
+use skymin\InventoryLib\inventory\{InvType, BaseInventory, SimpleInv};
 
 class InvTest extends PluginBase{
 	
 	public function onEnable() :void{
-		InvLibManager::register($this);
+		InvLibHandler::register($this);
 		$cmd = new PluginCommand('inv', $this, $this);
 		$cmd->setDescription('InventoryLib test plugin');
 		$this->getServer()->getCommandMap()->register('inv', $cmd);
@@ -31,34 +33,31 @@ class InvTest extends PluginBase{
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
 		if(!isset($args[0])) return false;
 		$type = match($args[0]){
-			'doublechest','dc' => LibInvType::DOUBLE_CHEST(),
-			'chest', 'c' => LibInvType::CHEST(),
-			'hopper', 'h' => LibInvType::HOPPER(),
-			'dropper', 'd' => LibInvType::DROPPER(),
-			default => LibInvType::DOUBLE_CHEST()
+			'doublechest','dc' => InvType::DOUBLE_CHEST(),
+			'chest', 'c' => InvType::CHEST(),
+			'hopper', 'h' => InvType::HOPPER(),
+			'dropper', 'd' => InvType::DROPPER(),
+			default => InvType::DOUBLE_CHEST()
 		};
-		$inv = InvLibManager::create($type, $sender->getPosition(), 'test');
-		$inv->setListener(function(InvLibAction $action) use ($inv): void{
+		$inv = SimpleInv::create($type, 'test');
+		$inv->setActionHandler(function(SimpleInv $inv, InventoryAction $action) : bool{
 			$item = $action->getSourceItem();
 			$player = $action->getPlayer();
 			if($item->getId() === 1){
-				$inv->close($player, function() use ($player) : void{
-					$player->sendMessage('test');
-				});
-			}else{
-				$action->setCancelled();
-				$inv->close($player, function() use ($player) : void{
-					$player->sendMessage(':(');
-				});
+				$inv->close($player);
+				$player->sendMessage('test');
+				return true;
 			}
+			$inv->close($player);
+			$player->sendMessage(':(');
+			return false;
 		});
-		$inv->setCloseListener(function(Player $player) : void{
+		$inv->setCloseHandler(function(SimpleInv $inv, Player $player) : void{
 			$player->sendMessage('closed inv');
 		});
 		$inv->setItem(4, ItemFactory::getInstance()->get(5));
-		$inv->send($sender, function() use ($inv) : void{
-			$inv->addItem(ItemFactory::getInstance()->get(1));
-		});
+		$inv->addItem(ItemFactory::getInstance()->get(1));
+		$inv->send($sender);
 		return true;
 	}
 	
