@@ -6,6 +6,6 @@ projects:
   InventoryLibTest:
     path: ""
     libs:
-      -  src: sky-min/InventoryLib/InventoryLib
+      - src: sky-min/InventoryLib/InventoryLib
         version: 4.1.0
 ...
