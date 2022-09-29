@@ -1,0 +1,11 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/sky-min/InventoryLibTest
+build-by-default: true
+branches:
+- pm5
+projects:
+  InventoryLibTest:
+    path: ""
+    libs:
+      -  src: sky-min/InventoryLib/InventoryLib
+        version: 4.1.0
+...
