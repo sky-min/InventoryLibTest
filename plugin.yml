@@ -1,0 +1,5 @@
+name: InvLibTest
+main: skymin\InvLibTest\Main
+api: 5.0.0
+version: 1.0.0
+author: skymin
