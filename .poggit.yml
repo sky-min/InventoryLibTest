@@ -8,4 +8,5 @@ projects:
     libs:
       - src: sky-min/InventoryLib/InventoryLib
         version: ^4.1.0
+        branch: pm5
 ...
