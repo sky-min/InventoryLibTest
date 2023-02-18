@@ -4,7 +4,7 @@ namespace skymin\InvLibTest\block;
 
 use pocketmine\block\{
 	Block,
-	BlockFactory,
+	RuntimeBlockStateRegistry,
 	VanillaBlocks as Blocks,
 	BlockTypeInfo as Info, 
 	BlockBreakInfo as BreakInfo,
@@ -33,7 +33,7 @@ final class BlockManager{
 	private static function register(Block $block, string $namespace = "", ?array $stringToItemParserNames = null, bool $force = true, ?\Closure $serializeCallback = null, ?\Closure $deserializeCallback = null){
 		$namespace = $namespace === "" ? "minecraft:" . strtolower(str_replace(" ", "_", $block->getName())) : $namespace;
 
-		BlockFactory::getInstance()->register($block, $force);
+		RuntimeBlockStateRegistry::getInstance()->register($block, $force);
 		
 		GlobalBlockStateHandlers::getDeserializer()->map($namespace, $deserializeCallback !== null ? $deserializeCallback : fn() => clone $block);
 		GlobalBlockStateHandlers::getSerializer()->map($block, $serializeCallback !== null ? $serializeCallback : fn() => Writer::create($namespace));
